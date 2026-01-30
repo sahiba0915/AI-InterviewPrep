@@ -49,82 +49,84 @@ function ReviewPage({ topic, topicName, questions, onBackToSelection, onRetakeTo
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+      <div className="glassmorphism rounded-3xl shadow-2xl p-8 md:p-12 mb-6">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
-            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mb-6 shadow-2xl animate-bounce">
+            <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Topic Review Complete!
+          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3">
+            Topic Review Complete! 🎉
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-xl text-gray-700 font-semibold">
             {topicName}
           </p>
         </div>
 
         {/* Overall Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-blue-600">{averageScore}</p>
-            <p className="text-sm text-gray-600 mt-1">Average Score</p>
-            <p className={`text-xs font-medium mt-1 ${performance.color}`}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+          <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl p-6 text-center shadow-xl transform hover:scale-105 transition-all duration-300">
+            <p className="text-4xl font-extrabold text-white drop-shadow-lg">{averageScore}</p>
+            <p className="text-sm text-white/90 mt-2 font-semibold">Average Score</p>
+            <p className={`text-xs font-bold mt-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm`}>
               {performance.text}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-green-600">{percentageScore}%</p>
-            <p className="text-sm text-gray-600 mt-1">Overall Score</p>
-            <p className="text-xs text-gray-500 mt-1">{totalScore} / {maxPossibleScore}</p>
+          <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl p-6 text-center shadow-xl transform hover:scale-105 transition-all duration-300">
+            <p className="text-4xl font-extrabold text-white drop-shadow-lg">{percentageScore}%</p>
+            <p className="text-sm text-white/90 mt-2 font-semibold">Overall Score</p>
+            <p className="text-xs text-white/80 mt-2 font-semibold">{totalScore} / {maxPossibleScore}</p>
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-purple-600">{relevantCount}/{totalQuestions}</p>
-            <p className="text-sm text-gray-600 mt-1">Relevant Answers</p>
-            <p className="text-xs text-gray-500 mt-1">{correctCount} correct</p>
+          <div className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl p-6 text-center shadow-xl transform hover:scale-105 transition-all duration-300">
+            <p className="text-4xl font-extrabold text-white drop-shadow-lg">{relevantCount}/{totalQuestions}</p>
+            <p className="text-sm text-white/90 mt-2 font-semibold">Relevant Answers</p>
+            <p className="text-xs text-white/80 mt-2 font-semibold">{correctCount} correct</p>
           </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 text-center">
-            <p className="text-3xl font-bold text-orange-600">{totalQuestions}</p>
-            <p className="text-sm text-gray-600 mt-1">Questions</p>
-            <p className="text-xs text-gray-500 mt-1">All completed</p>
+          <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-6 text-center shadow-xl transform hover:scale-105 transition-all duration-300">
+            <p className="text-4xl font-extrabold text-white drop-shadow-lg">{totalQuestions}</p>
+            <p className="text-sm text-white/90 mt-2 font-semibold">Questions</p>
+            <p className="text-xs text-white/80 mt-2 font-semibold">All completed ✓</p>
           </div>
         </div>
 
         {/* Questions Breakdown */}
-        <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Question Breakdown</h3>
-          <div className="space-y-4">
+        <div className="border-t-2 border-gray-300 pt-8">
+          <h3 className="text-2xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+            <span>📋</span> Question Breakdown
+          </h3>
+          <div className="space-y-5">
             {questionScores.map((q, index) => (
               <div
                 key={q.id}
-                className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                className="border-2 border-gray-200 rounded-2xl p-5 hover:border-purple-400 transition-all duration-300 bg-white shadow-md hover:shadow-xl transform hover:-translate-y-1"
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium text-gray-500">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                         Question {index + 1}
                       </span>
-                      <span className={`px-2 py-1 text-xs font-semibold rounded ${
-                        q.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                        q.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
+                      <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-md ${
+                        q.difficulty === 'easy' ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' :
+                        q.difficulty === 'medium' ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
+                        'bg-gradient-to-r from-red-400 to-pink-500 text-white'
                       }`}>
-                        {q.difficulty}
+                        {q.difficulty.toUpperCase()}
                       </span>
-                      <span className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded">
+                      <span className="px-3 py-1 text-xs font-bold text-purple-700 bg-purple-100 rounded-full shadow-md">
                         {q.category}
                       </span>
                     </div>
-                    <p className="text-gray-900 font-medium">{q.question}</p>
+                    <p className="text-gray-900 font-semibold text-base">{q.question}</p>
                   </div>
                   {q.score !== null ? (
-                    <div className={`ml-4 px-4 py-2 rounded-lg font-bold text-lg ${getScoreColor(q.score)}`}>
+                    <div className={`ml-4 px-5 py-3 rounded-2xl font-extrabold text-xl shadow-lg ${getScoreColor(q.score)}`}>
                       {q.score}/100
                     </div>
                   ) : (
-                    <div className="ml-4 px-4 py-2 rounded-lg font-bold text-lg text-gray-400 bg-gray-100">
+                    <div className="ml-4 px-5 py-3 rounded-2xl font-extrabold text-xl text-gray-400 bg-gray-100 shadow-lg">
                       N/A
                     </div>
                   )}
@@ -174,18 +176,18 @@ function ReviewPage({ topic, topicName, questions, onBackToSelection, onRetakeTo
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10 pt-8 border-t-2 border-gray-300">
           <button
             onClick={onBackToSelection}
-            className="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+            className="w-full sm:w-auto px-8 py-4 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
           >
-            Back to Topics
+            ← Back to Topics
           </button>
           <button
             onClick={onRetakeTopic}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 font-bold shadow-lg hover:shadow-2xl transform hover:scale-105"
           >
-            Retake Topic
+            🔄 Retake Topic
           </button>
         </div>
       </div>

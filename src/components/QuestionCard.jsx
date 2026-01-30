@@ -183,31 +183,31 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className="glassmorphism rounded-2xl shadow-2xl p-8 mb-6 card-hover">
       {/* Question Header */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-6">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <span className={`px-3 py-1 text-xs font-semibold rounded ${
-              question.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-              question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-              'bg-red-100 text-red-800'
+          <div className="flex items-center gap-2 mb-3">
+            <span className={`px-4 py-1.5 text-xs font-bold rounded-full shadow-md ${
+              question.difficulty === 'easy' ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' :
+              question.difficulty === 'medium' ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white' :
+              'bg-gradient-to-r from-red-400 to-pink-500 text-white'
             }`}>
-              {question.difficulty}
+              {question.difficulty.toUpperCase()}
             </span>
-            <span className="px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded">
+            <span className="px-4 py-1.5 text-xs font-semibold text-purple-700 bg-purple-100 rounded-full shadow-md">
               {question.category}
             </span>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{question.question}</h3>
+          <h3 className="text-2xl font-extrabold text-gray-900 mb-2 leading-tight">{question.question}</h3>
         </div>
         <button
           onClick={handleReadQuestion}
           disabled={isSpeaking}
-          className="ml-4 p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+          className="ml-4 p-3 text-purple-600 hover:text-white bg-purple-50 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 transform hover:scale-110"
           title="Read question aloud"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
           </svg>
         </button>
@@ -215,23 +215,24 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
 
       {/* Speech Recognition Section */}
       <div className="mb-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           {!isListening ? (
             <button
               onClick={handleStartRecording}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
               </svg>
-              Start Recording
+              🎤 Start Recording
             </button>
           ) : (
             <button
               onClick={handleStopRecording}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium animate-pulse"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 font-bold shadow-lg animate-pulse"
             >
-              <div className="w-3 h-3 bg-white rounded-full"></div>
+              <div className="w-4 h-4 bg-red-500 rounded-full animate-ping absolute"></div>
+              <div className="w-4 h-4 bg-white rounded-full"></div>
               Recording... Click to Stop
             </button>
           )}
@@ -240,33 +241,38 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
             <button
               onClick={handleSubmitAnswer}
               disabled={hasAnswered || isEvaluating || totalSpeakingTime < MIN_SPEAKING_SECONDS}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
               title={totalSpeakingTime < MIN_SPEAKING_SECONDS ? `Speak for ${MIN_SPEAKING_SECONDS - totalSpeakingTime} more second${MIN_SPEAKING_SECONDS - totalSpeakingTime !== 1 ? 's' : ''} to enable submit` : 'Submit your answer'}
             >
-              {isEvaluating ? 'Evaluating...' : totalSpeakingTime < MIN_SPEAKING_SECONDS ? `Submit (${MIN_SPEAKING_SECONDS - totalSpeakingTime}s left)` : 'Submit Answer'}
+              {isEvaluating ? '⏳ Evaluating...' : totalSpeakingTime < MIN_SPEAKING_SECONDS ? `Submit (${MIN_SPEAKING_SECONDS - totalSpeakingTime}s left)` : '✓ Submit Answer'}
             </button>
           )}
           
           {isEvaluating && (
-            <div className="flex items-center gap-2 text-blue-600">
-              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span className="text-sm font-medium">AI is evaluating your answer...</span>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 px-4 py-2 rounded-xl border-2 border-blue-200">
+              <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <span className="text-sm font-bold text-blue-700">AI is evaluating your answer...</span>
             </div>
           )}
         </div>
 
         {/* Transcript Display */}
         {transcript && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-            <p className="text-sm text-gray-600 mb-2 font-medium">Your Answer:</p>
-            <p className="text-gray-900">{transcript}</p>
-            <div className="mt-3 space-y-2">
-              <p className="text-xs text-gray-500">
-                <strong>Tip:</strong> Speak clearly and pause between technical terms. Use Chrome for best accuracy.
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded p-2">
-                <p className="text-xs text-blue-800 font-medium mb-1">Common corrections:</p>
-                <ul className="text-xs text-blue-700 list-disc list-inside space-y-0.5">
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-2xl p-6 mb-4 shadow-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-2xl">💬</span>
+              <p className="text-sm text-purple-900 font-bold">Your Answer:</p>
+            </div>
+            <p className="text-gray-900 leading-relaxed text-lg">{transcript}</p>
+            <div className="mt-4 space-y-3">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-purple-200">
+                <p className="text-xs text-gray-700">
+                  <strong className="text-purple-700">💡 Tip:</strong> Speak clearly and pause between technical terms. Use Chrome for best accuracy.
+                </p>
+              </div>
+              <div className="bg-gradient-to-br from-blue-100 to-cyan-100 border-2 border-blue-300 rounded-xl p-3">
+                <p className="text-xs text-blue-900 font-bold mb-2">✓ Common corrections:</p>
+                <ul className="text-xs text-blue-800 list-disc list-inside space-y-1">
                   <li>Say "var" (not "where"), "let", "const" (not "cons")</li>
                   <li>Say "reassigned" and "redeclared" clearly</li>
                   <li>Say "block scoped" and "hoisted" distinctly</li>
@@ -277,13 +283,13 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
               <button
                 type="button"
                 onClick={() => handleStartRecording(true)}
-                className="mt-3 flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                className="mt-4 flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                 title="Clear this answer and record again"
               >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
                 </svg>
-                Record again
+                🔄 Record again
               </button>
             )}
           </div>
@@ -291,50 +297,62 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
 
         {/* Error Display */}
         {recognitionError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p className="text-sm text-red-800">{recognitionError}</p>
+          <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-300 rounded-xl p-4 mb-4 shadow-md">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">⚠️</span>
+              <p className="text-sm text-red-800 font-semibold">{recognitionError}</p>
+            </div>
           </div>
         )}
 
         {/* Time Requirement and Progress */}
         <div className="mb-4">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-yellow-800">
-                ⏱️ Minimum speaking time: {MIN_SPEAKING_SECONDS} seconds
+          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-5 mb-3 shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-bold text-yellow-900 flex items-center gap-2">
+                <span className="text-xl">⏱️</span>
+                Minimum speaking time: {MIN_SPEAKING_SECONDS} seconds
               </p>
-              <span className={`text-sm font-bold ${
-                totalSpeakingTime >= MIN_SPEAKING_SECONDS ? 'text-green-600' : 'text-yellow-600'
+              <span className={`text-sm font-extrabold px-3 py-1 rounded-full ${
+                totalSpeakingTime >= MIN_SPEAKING_SECONDS 
+                  ? 'bg-green-500 text-white shadow-lg' 
+                  : 'bg-yellow-500 text-white'
               }`}>
                 {totalSpeakingTime} / {MIN_SPEAKING_SECONDS}s
               </span>
             </div>
             {/* Progress Bar */}
-            <div className="w-full bg-yellow-200 rounded-full h-2">
+            <div className="w-full bg-yellow-200 rounded-full h-3 shadow-inner overflow-hidden">
               <div
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  totalSpeakingTime >= MIN_SPEAKING_SECONDS ? 'bg-green-500' : 'bg-yellow-500'
+                className={`h-3 rounded-full transition-all duration-300 ${
+                  totalSpeakingTime >= MIN_SPEAKING_SECONDS 
+                    ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg' 
+                    : 'bg-gradient-to-r from-yellow-400 to-orange-500'
                 }`}
                 style={{ width: `${Math.min((totalSpeakingTime / MIN_SPEAKING_SECONDS) * 100, 100)}%` }}
               ></div>
             </div>
             {totalSpeakingTime < MIN_SPEAKING_SECONDS && (
-              <p className="text-xs text-yellow-700 mt-2">
-                {MIN_SPEAKING_SECONDS - totalSpeakingTime} second{MIN_SPEAKING_SECONDS - totalSpeakingTime !== 1 ? 's' : ''} remaining
+              <p className="text-xs text-yellow-800 mt-2 font-semibold">
+                🔔 {MIN_SPEAKING_SECONDS - totalSpeakingTime} second{MIN_SPEAKING_SECONDS - totalSpeakingTime !== 1 ? 's' : ''} remaining
               </p>
             )}
             {totalSpeakingTime >= MIN_SPEAKING_SECONDS && (
-              <p className="text-xs text-green-700 mt-2 font-medium">
-                ✓ Minimum time requirement met! You can now submit your answer.
+              <p className="text-xs text-green-800 mt-2 font-bold flex items-center gap-1">
+                <span className="text-base">✓</span>
+                Minimum time requirement met! You can now submit your answer.
               </p>
             )}
           </div>
 
           {/* Current Recording Indicator */}
           {isListening && (
-            <div className="flex items-center gap-2 text-red-600 mb-2">
-              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-3 rounded-xl shadow-lg mb-2 animate-pulse">
+              <div className="relative">
+                <div className="w-3 h-3 bg-white rounded-full animate-ping absolute"></div>
+                <div className="w-3 h-3 bg-white rounded-full"></div>
+              </div>
+              <span className="text-sm font-bold">
                 Recording... ({Math.floor(recordingDuration / 60)}:{(recordingDuration % 60).toString().padStart(2, '0')})
               </span>
             </div>
@@ -355,21 +373,21 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+      <div className="flex items-center justify-between pt-6 border-t-2 border-gray-200 mt-6">
         <button
           onClick={onPrevious}
           disabled={isFirst}
-          className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-bold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
         >
-          Previous
+          ← Previous
         </button>
         <button
           onClick={onNext}
           disabled={isLast || !hasAnswered}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 font-bold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
           title={!hasAnswered ? 'Submit your answer first to go to the next question' : 'Next question'}
         >
-          Next Question
+          Next Question →
         </button>
       </div>
     </div>
