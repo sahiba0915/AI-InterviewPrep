@@ -5,7 +5,8 @@ const topics = [
   { id: 'frontend', name: 'Frontend Developer', icon: '💻' },
   { id: 'backend', name: 'Backend Developer', icon: '⚙️' },
   { id: 'fullstack', name: 'Full Stack Developer', icon: '🚀' },
-  { id: 'data-analyst', name: 'Data Analyst', icon: '📊' }
+  { id: 'data-analyst', name: 'Data Analyst', icon: '📊' },
+  { id: 'qa', name: 'QA Engineer', icon: '🔍' }
 ];
 
 function TopicSelector({ onTopicSelect }) {

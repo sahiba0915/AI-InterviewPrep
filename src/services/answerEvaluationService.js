@@ -18,7 +18,9 @@ const categoryKeywords = {
   'Data Cleaning': ['outlier', 'missing data', 'normalization', 'validation', 'transformation', 'quality'],
   'Statistics': ['correlation', 'causation', 'mean', 'median', 'standard deviation', 'distribution', 'hypothesis'],
   'Data Visualization': ['chart', 'graph', 'dashboard', 'plot', 'visualization', 'insight', 'trend'],
-  'SQL': ['select', 'join', 'where', 'group by', 'having', 'index', 'query', 'optimization', 'performance']
+  'SQL': ['select', 'join', 'where', 'group by', 'having', 'index', 'query', 'optimization', 'performance'],
+  'Testing': ['test', 'testing', 'manual', 'automated', 'automation', 'unit', 'integration', 'system', 'acceptance', 'tdd', 'test-driven', 'bug', 'defect', 'error', 'test case', 'scenario', 'assertion', 'verification', 'validation'],
+  'Test Cases': ['test case', 'scenario', 'precondition', 'steps', 'expected result', 'actual result', 'test data', 'boundary', 'edge case', 'positive', 'negative']
 };
 
 /**

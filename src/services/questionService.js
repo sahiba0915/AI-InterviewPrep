@@ -127,6 +127,38 @@ const mockQuestions = {
       difficulty: "hard",
       category: "SQL"
     }
+  ],
+  'qa': [
+    {
+      id: 1,
+      question: "What is the difference between manual testing and automated testing?",
+      difficulty: "easy",
+      category: "Testing"
+    },
+    {
+      id: 2,
+      question: "Explain the different types of testing: unit, integration, system, and acceptance testing.",
+      difficulty: "medium",
+      category: "Testing"
+    },
+    {
+      id: 3,
+      question: "What is test-driven development (TDD) and how does it work?",
+      difficulty: "medium",
+      category: "Testing"
+    },
+    {
+      id: 4,
+      question: "How would you write a test case for a login functionality?",
+      difficulty: "medium",
+      category: "Test Cases"
+    },
+    {
+      id: 5,
+      question: "What is the difference between bug, defect, and error in software testing?",
+      difficulty: "easy",
+      category: "Testing"
+    }
   ]
 };
 

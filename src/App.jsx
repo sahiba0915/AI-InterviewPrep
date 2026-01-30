@@ -9,7 +9,8 @@ const topicNames = {
   'frontend': 'Frontend Developer',
   'backend': 'Backend Developer',
   'fullstack': 'Full Stack Developer',
-  'data-analyst': 'Data Analyst'
+  'data-analyst': 'Data Analyst',
+  'qa': 'QA Engineer'
 };
 
 function App() {
