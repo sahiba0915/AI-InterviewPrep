@@ -4,6 +4,7 @@ import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import FeedbackDisplay from './FeedbackDisplay';
 import { saveProgress } from '../services/progressService';
 import { evaluateAnswer } from '../services/answerEvaluationService';
+import { generateHint, isGeminiConfigured } from '../services/geminiService';
 
 const MIN_SPEAKING_SECONDS = 30;
 
@@ -19,6 +20,9 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
   const [totalSpeakingTime, setTotalSpeakingTime] = useState(0); // cumulative speaking time
   const recordingStartTimeRef = useRef(null);
   const timerIntervalRef = useRef(null);
+  const [hint, setHint] = useState('');
+  const [isLoadingHint, setIsLoadingHint] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   
   const {
     transcript,
@@ -52,6 +56,8 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
       setHasAnswered(false);
       setRecordingDuration(0);
       setTotalSpeakingTime(0);
+      setHint('');
+      setShowHint(false);
       if (timerIntervalRef.current) {
         clearInterval(timerIntervalRef.current);
       }
@@ -182,6 +188,30 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
     }
   };
 
+  const handleGetHint = async () => {
+    if (!isGeminiConfigured()) {
+      alert('Hints require AI configuration. Please set up your Gemini API key in the .env file.');
+      return;
+    }
+
+    setIsLoadingHint(true);
+    try {
+      const generatedHint = await generateHint(question);
+      setHint(generatedHint);
+      setShowHint(true);
+      
+      // Speak the hint
+      if (synthesisSupported) {
+        speak(generatedHint, { rate: 0.85 });
+      }
+    } catch (error) {
+      console.error('Error generating hint:', error);
+      alert('Failed to generate hint. Please try again.');
+    } finally {
+      setIsLoadingHint(false);
+    }
+  };
+
   return (
     <div className="glassmorphism rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 card-hover">
       {/* Question Header */}
@@ -201,17 +231,47 @@ function QuestionCard({ question, topic, onNext, onPrevious, isFirst, isLast, on
           </div>
           <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-gray-900 mb-2 leading-tight break-words">{question.question}</h3>
         </div>
-        <button
-          onClick={handleReadQuestion}
-          disabled={isSpeaking}
-          className="w-10 h-10 sm:w-auto sm:h-auto sm:ml-4 sm:p-3 shrink-0 flex items-center justify-center text-purple-600 hover:text-white bg-purple-50 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 rounded-lg sm:rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 transform hover:scale-110 touch-manipulation"
-          title="Read question aloud"
-        >
-          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-          </svg>
-        </button>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={handleReadQuestion}
+            disabled={isSpeaking}
+            className="w-10 h-10 sm:w-auto sm:h-auto sm:p-3 flex items-center justify-center text-purple-600 hover:text-white bg-purple-50 hover:bg-gradient-to-r hover:from-purple-500 hover:to-blue-500 rounded-lg sm:rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 transform hover:scale-110 touch-manipulation"
+            title="Read question aloud"
+          >
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+          </button>
+          {!hasAnswered && isGeminiConfigured() && (
+            <button
+              onClick={handleGetHint}
+              disabled={isLoadingHint || isSpeaking}
+              className="w-10 h-10 sm:w-auto sm:h-auto sm:px-3 sm:py-3 flex items-center justify-center gap-2 text-yellow-600 hover:text-white bg-yellow-50 hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-500 rounded-lg sm:rounded-xl transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 transform hover:scale-110 touch-manipulation"
+              title="Get a hint"
+            >
+              {isLoadingHint ? (
+                <div className="w-5 h-5 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <span className="text-xl sm:text-2xl">💡</span>
+                  <span className="hidden sm:inline text-sm font-semibold">Hint</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Hint Display */}
+      {showHint && hint && (
+        <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 shadow-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl">💡</span>
+            <p className="text-sm sm:text-base font-bold text-yellow-900">Hint:</p>
+          </div>
+          <p className="text-gray-800 leading-relaxed text-sm sm:text-base">{hint}</p>
+        </div>
+      )}
 
       {/* Speech Recognition Section */}
       <div className="mb-4 sm:mb-6">

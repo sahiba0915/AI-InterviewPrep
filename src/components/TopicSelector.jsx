@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { questionService } from '../services/questionService';
+import { isGeminiConfigured } from '../services/geminiService';
 
 const topics = [
   { id: 'frontend', name: 'Frontend Developer', icon: '💻' },
@@ -12,18 +13,26 @@ const topics = [
 function TopicSelector({ onTopicSelect }) {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const aiEnabled = isGeminiConfigured();
 
   const handleTopicClick = async (topicId) => {
+    // Check if AI is configured before proceeding
+    if (!aiEnabled) {
+      alert('⚠️ AI is required for this app!\n\nPlease:\n1. Get a free API key from: https://aistudio.google.com/app/apikey\n2. Add it to your .env file as VITE_GEMINI_API_KEY\n3. Restart the dev server\n\nSee SETUP.md for detailed instructions.');
+      return;
+    }
+
     setSelectedTopic(topicId);
     setIsLoading(true);
     
     try {
-      // Fetch questions for the selected topic
+      // Fetch AI-generated questions for the selected topic
       const questions = await questionService.getQuestions(topicId);
       onTopicSelect(topicId, questions);
     } catch (error) {
       console.error('Error fetching questions:', error);
-      alert('Failed to load questions. Please try again.');
+      alert(`❌ Failed to generate questions:\n\n${error.message}\n\nPlease check:\n- Your internet connection\n- Your API key is correct\n- The Gemini API is enabled`);
+      setSelectedTopic(null);
     } finally {
       setIsLoading(false);
     }
@@ -40,9 +49,27 @@ function TopicSelector({ onTopicSelect }) {
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight px-2">
             Select Your Interview Topic
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg font-medium px-4">
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg font-medium px-4 mb-3">
             Choose a role or technology area to start practicing 🚀
           </p>
+          
+          {/* AI Status Badge */}
+          <div className="flex justify-center">
+            {aiEnabled ? (
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-full shadow-lg text-xs sm:text-sm font-bold">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                </span>
+                🤖 AI Powered - Questions, Evaluation & Hints
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg text-xs sm:text-sm font-bold animate-pulse">
+                <span className="text-base">⚠️</span>
+                AI Required - Please Configure API Key
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 relative z-10">
@@ -111,7 +138,9 @@ function TopicSelector({ onTopicSelect }) {
               <div className="relative">
                 <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-3 border-purple-200 border-t-purple-600"></div>
               </div>
-              <p className="text-gray-800 font-bold text-xs sm:text-sm">Loading questions...</p>
+              <p className="text-gray-800 font-bold text-xs sm:text-sm">
+                {aiEnabled ? '🤖 AI is generating questions...' : 'Loading questions...'}
+              </p>
             </div>
           </div>
         )}

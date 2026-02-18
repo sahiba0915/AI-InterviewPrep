@@ -1,4 +1,6 @@
-// Mock question data for different tech topics/roles
+import { generateQuestions as generateQuestionsWithAI, isGeminiConfigured } from './geminiService';
+
+// Mock question data for different tech topics/roles (fallback if AI fails)
 const mockQuestions = {
   'frontend': [
     {
@@ -163,24 +165,35 @@ const mockQuestions = {
 };
 
 /**
- * Mock API service for fetching interview questions
- * Simulates an API call with a delay
+ * Question service with AI-powered question generation
+ * Falls back to mock data if AI is not configured or fails
  */
 export const questionService = {
   /**
-   * Get questions for a specific topic
+   * Get questions for a specific topic (AI-generated ONLY)
    * @param {string} topic - The topic/role to get questions for
    * @returns {Promise<Array>} Array of question objects
    */
   async getQuestions(topic) {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    if (!topic || !mockQuestions[topic]) {
-      throw new Error(`No questions found for topic: ${topic}`);
+    if (!topic) {
+      throw new Error('Topic is required');
     }
-    
-    return mockQuestions[topic];
+
+    // Check if AI is configured
+    if (!isGeminiConfigured()) {
+      throw new Error('AI is not configured. Please set VITE_GEMINI_API_KEY in your .env file to use this app.');
+    }
+
+    // Generate questions with AI
+    try {
+      console.log(`🤖 Generating AI questions for: ${topic}`);
+      const aiQuestions = await generateQuestionsWithAI(topic, 5);
+      console.log('✅ AI questions generated successfully');
+      return aiQuestions;
+    } catch (error) {
+      console.error('❌ AI generation failed:', error.message);
+      throw new Error(`Failed to generate questions: ${error.message}. Please check your API key and internet connection.`);
+    }
   },
 
   /**

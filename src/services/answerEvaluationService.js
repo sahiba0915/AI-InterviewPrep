@@ -1,9 +1,11 @@
 /**
- * Mock AI Evaluation Service
- * Simulates AI-based answer evaluation with relevance checking and scoring
+ * Answer Evaluation Service with AI
+ * Uses Gemini AI for intelligent evaluation, falls back to rule-based if unavailable
  */
 
-// Keywords and concepts for different question categories
+import { evaluateAnswerWithAI, isGeminiConfigured } from './geminiService';
+
+// Keywords and concepts for different question categories (for fallback)
 const categoryKeywords = {
   'JavaScript': ['variable', 'scope', 'hoisting', 'closure', 'async', 'promise', 'function', 'object', 'array', 'let', 'const', 'var', 'es6', 'arrow function'],
   'React': ['component', 'virtual dom', 'state', 'props', 'hook', 'lifecycle', 'render', 'jsx', 'reconciliation', 'fiber'],
@@ -189,15 +191,12 @@ function generateFeedback(question, answer, relevanceScore, correctness) {
 }
 
 /**
- * Evaluate an answer using AI-like analysis
+ * Evaluate an answer using AI ONLY
  * @param {Object} question - Question object
  * @param {string} answer - User's answer text
  * @returns {Promise<Object>} Evaluation result with feedback and score
  */
 export async function evaluateAnswer(question, answer) {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-
   if (!answer || answer.trim().length === 0) {
     return {
       text: 'Please provide an answer to evaluate.',
@@ -208,35 +207,21 @@ export async function evaluateAnswer(question, answer) {
     };
   }
 
-  // Calculate scores
-  let relevanceScore = calculateRelevanceScore(answer, question.category);
-  const correctness = checkCorrectness(question, answer);
-
-  // Boost score if answer addresses the question directly
-  if (correctness.addressesQuestion) {
-    relevanceScore = Math.min(relevanceScore + 15, 100); // +15 bonus for addressing question
+  // Check if AI is configured
+  if (!isGeminiConfigured()) {
+    throw new Error('AI is not configured. Please set VITE_GEMINI_API_KEY in your .env file.');
   }
 
-  // Boost score for technical terms
-  if (correctness.hasTechnicalTerms) {
-    relevanceScore = Math.min(relevanceScore + 10, 100); // +10 bonus for technical terms
+  // Evaluate with AI
+  try {
+    console.log('🤖 Evaluating answer with AI...');
+    const aiEvaluation = await evaluateAnswerWithAI(question, answer);
+    console.log('✅ AI evaluation completed');
+    return aiEvaluation;
+  } catch (error) {
+    console.error('❌ AI evaluation failed:', error.message);
+    throw new Error(`Failed to evaluate answer: ${error.message}. Please check your API key and internet connection.`);
   }
-
-  // Boost score for explanations
-  if (correctness.hasExplanation) {
-    relevanceScore = Math.min(relevanceScore + 5, 100); // +5 bonus for detailed explanation
-  }
-
-  // Ensure minimum score for any reasonable attempt (at least 30 words)
-  const wordCount = answer.split(' ').length;
-  if (wordCount >= 30 && relevanceScore < 50) {
-    relevanceScore = Math.max(relevanceScore, 50); // Minimum 50 for substantial answers
-  }
-
-  // Generate feedback
-  const feedback = generateFeedback(question, answer, relevanceScore, correctness);
-
-  return feedback;
 }
 
 /**
